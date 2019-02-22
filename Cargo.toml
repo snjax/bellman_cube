@@ -8,7 +8,7 @@ edition = "2018"
 
 [lib]
 name = "demo"
-path = "src/cube.rs"
+path = "src/lib.rs"
 
 [dependencies]
 rand = "0.4"
@@ -16,5 +16,6 @@ rand = "0.4"
 ff = { git = 'https://github.com/matterinc/ff', features = ["derive"] }
 pairing = { git = 'https://github.com/matterinc/pairing' }
 bellman = { git = 'https://github.com/matterinc/bellman' }
+sapling-crypto = { git = 'https://github.com/matterinc/sapling-crypto' }
 
 
