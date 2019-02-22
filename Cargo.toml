@@ -1,0 +1,20 @@
+[package]
+authors = ["Igor Gulamov"]
+description = "cube circuit demo for ethereum friendly curve"
+license = "MIT/Apache-2.0"
+name = "cube"
+version = "0.0.1"
+edition = "2018"
+
+[lib]
+name = "demo"
+path = "src/cube.rs"
+
+[dependencies]
+rand = "0.4"
+
+ff = { git = 'https://github.com/matterinc/ff', features = ["derive"] }
+pairing = { git = 'https://github.com/matterinc/pairing' }
+bellman = { git = 'https://github.com/matterinc/bellman' }
+
+
