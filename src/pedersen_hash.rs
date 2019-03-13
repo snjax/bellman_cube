@@ -37,6 +37,7 @@ use sapling_crypto::circuit::{
 };
 
 use sapling_crypto::circuit::num::{AllocatedNum, Num};
+use sapling_crypto::alt_babyjubjub::{AltJubjubBn256};
 
 use pairing::{
     Engine
@@ -101,7 +102,6 @@ impl <'a, E: JubjubEngine> Circuit<E> for PedersenDemo<'a, E> {
 
         let preimage_bits = preimage.into_bits_le(cs.namespace(|| "preimage into bits"))?;
 
-
         let hash_calculated = pedersen_hash::pedersen_hash(
             cs.namespace(|| "hash calculated"),
             pedersen_hash::Personalization::NoteCommitment,
@@ -120,3 +120,44 @@ impl <'a, E: JubjubEngine> Circuit<E> for PedersenDemo<'a, E> {
     }
 }
 
+#[test]
+fn test_pedersen_proof(){
+    // This may not be cryptographically safe, use
+    // `OsRng` (for example) in production software.
+    let rng = &mut thread_rng();
+    let pedersen_params = &AltJubjubBn256::new();
+    
+    println!("Creating parameters...");
+    
+    // Create parameters for our circuit
+    let params = {
+        let c = PedersenDemo::<Bn256> {
+            params: pedersen_params,
+            hash: None,
+            preimage: None
+        };
+
+        generate_random_parameters(c, rng).unwrap()
+    };
+    
+    // Prepare the verification key (for proof verification)
+    let pvk = prepare_verifying_key(&params.vk);
+
+    println!("Creating proofs...");
+    
+    // Create an instance of circuit
+    let c = PedersenDemo::<Bn256> {
+        params: pedersen_params,
+        hash: Fr::from_str("0x184570ed4909a81b2793320a26e8f956be129e4eed381acf901718dff8802135"),
+        preimage: Fr::from_str("0x1c3a9a830f61587101ef8cbbebf55063c1c6480e7e5a7441eac7f626d8f69a45")
+    };
+    
+    // Create a groth16 proof with our parameters.
+    let proof = create_random_proof(c, &params, rng).unwrap();
+        
+    assert!(verify_proof(
+        &pvk,
+        &proof,
+        &[Fr::from_str("35").unwrap()]
+    ).unwrap());
+}
