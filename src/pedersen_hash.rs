@@ -14,6 +14,7 @@ use bellman::pairing::{Engine};
 use bellman::pairing::bn256::{Bn256, Fr};
 use bellman::{Circuit, ConstraintSystem, SynthesisError};
 use bellman::groth16::{Proof, generate_random_parameters, prepare_verifying_key, create_random_proof, verify_proof};
+use sapling_crypto::circuit::test::TestConstraintSystem;
 
 #[derive(Clone)]
 pub struct PedersenDemo<'a, E: JubjubEngine> {
@@ -82,41 +83,49 @@ pub fn test_pedersen_proof(){
     let hash = hasher.hash(preimage);
     
     println!("Creating parameters...");
-    
-    // Create parameters for our circuit
     let params = {
         let c = PedersenDemo::<Bn256> {
             params: pedersen_params,
             hash: None,
             preimage: None
         };
-
         generate_random_parameters(c, rng).unwrap()
     };
     
     // Prepare the verification key (for proof verification)
-    let pvk = prepare_verifying_key(&params.vk);
+    let vk = prepare_verifying_key(&params.vk);
 
-    println!("Creating proofs...");
-    
+    println!("Checking constraints...");
     // Create an instance of circuit
     let c = PedersenDemo::<Bn256> {
         params: pedersen_params,
         hash: Some(hash),
         preimage: Some(preimage)
     };
-    
-    // Create a groth16 proof with our parameters.
-    let proof = create_random_proof(c, &params, rng).unwrap();
+    let mut cs = TestConstraintSystem::<Bn256>::new();
+    c.synthesize(&mut cs).unwrap();
+    println!("Unconstrained: {}", cs.find_unconstrained());
+    let err = cs.which_is_unsatisfied();
+    if err.is_some() {
+        panic!("ERROR satisfying in: {}", err.unwrap());
+    }
 
+    println!("Creating proofs...");
+    // Create an instance of circuit
+    let c = PedersenDemo::<Bn256> {
+        params: pedersen_params,
+        hash: Some(hash),
+        preimage: Some(preimage)
+    };
+    let proof = create_random_proof(c, &params, rng).unwrap();
     let result = verify_proof(
-        &pvk,
+        &vk,
         &proof,
         &[
             hash,
             preimage
         ]
     ).unwrap();
-
-    println!("Success: {}", result);
+    // println!("Success: {}", result);
+    assert!(result, "Proof is correct");
 }
