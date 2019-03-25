@@ -1,69 +1,19 @@
 #![allow(unused_imports)]
 #![allow(unused_variables)]
 extern crate bellman;
-extern crate pairing;
 extern crate rand;
 
-// For randomness (during paramgen and proof generation)
 use self::rand::{thread_rng, Rng};
-
-// Bring in some tools for using pairing-friendly curves
-use ff::{
-    Field,
-    PrimeField,
-    PrimeFieldRepr
-};
-
-use sapling_crypto::jubjub::{
-    JubjubEngine,
-    FixedGenerators,
-    Unknown,
-    edwards,
-    JubjubParams
-};
-
-
-use sapling_crypto::circuit::{
-    Assignment,
-    boolean,
-    ecc,
-    pedersen_hash,
-    blake2s,
-    sha256,
-    num,
-    multipack,
-    baby_eddsa,
-    float_point,
-};
-
+use crate::hasher::BabyPedersenHasher;
+use bellman::pairing::ff::{Field, PrimeField, PrimeFieldRepr};
+use sapling_crypto::jubjub::{JubjubEngine, FixedGenerators, Unknown, edwards, JubjubParams};
+use sapling_crypto::circuit::{Assignment, boolean, ecc, pedersen_hash, blake2s, sha256, num, multipack, baby_eddsa, float_point};
 use sapling_crypto::circuit::num::{AllocatedNum, Num};
 use sapling_crypto::alt_babyjubjub::{AltJubjubBn256};
-
-use pairing::{
-    Engine
-};
-
-// We're going to use the bn256 pairing-friendly elliptic curve.
-use pairing::bn256::{
-    Bn256,
-    Fr
-};
-
-// We'll use these interfaces to construct our circuit.
-use bellman::{
-    Circuit,
-    ConstraintSystem,
-    SynthesisError
-};
-
-// We're going to use the Groth16 proving system.
-use bellman::groth16::{
-    Proof,
-    generate_random_parameters,
-    prepare_verifying_key,
-    create_random_proof,
-    verify_proof,
-};
+use bellman::pairing::{Engine};
+use bellman::pairing::bn256::{Bn256, Fr};
+use bellman::{Circuit, ConstraintSystem, SynthesisError};
+use bellman::groth16::{Proof, generate_random_parameters, prepare_verifying_key, create_random_proof, verify_proof};
 
 #[derive(Clone)]
 pub struct PedersenDemo<'a, E: JubjubEngine> {
@@ -120,12 +70,16 @@ impl <'a, E: JubjubEngine> Circuit<E> for PedersenDemo<'a, E> {
     }
 }
 
-#[test]
-fn test_pedersen_proof(){
+// #[test]
+pub fn test_pedersen_proof(){
     // This may not be cryptographically safe, use
     // `OsRng` (for example) in production software.
     let rng = &mut thread_rng();
     let pedersen_params = &AltJubjubBn256::new();
+
+    let preimage = Fr::from_hex("0x01").unwrap();
+    let hasher = BabyPedersenHasher::default();
+    let hash = hasher.hash(preimage);
     
     println!("Creating parameters...");
     
@@ -148,16 +102,21 @@ fn test_pedersen_proof(){
     // Create an instance of circuit
     let c = PedersenDemo::<Bn256> {
         params: pedersen_params,
-        hash: Fr::from_str("0x184570ed4909a81b2793320a26e8f956be129e4eed381acf901718dff8802135"),
-        preimage: Fr::from_str("0x1c3a9a830f61587101ef8cbbebf55063c1c6480e7e5a7441eac7f626d8f69a45")
+        hash: Some(hash),
+        preimage: Some(preimage)
     };
     
     // Create a groth16 proof with our parameters.
     let proof = create_random_proof(c, &params, rng).unwrap();
-        
-    assert!(verify_proof(
+
+    let result = verify_proof(
         &pvk,
         &proof,
-        &[Fr::from_str("35").unwrap()]
-    ).unwrap());
+        &[
+            hash,
+            preimage
+        ]
+    ).unwrap();
+
+    println!("Success: {}", result);
 }

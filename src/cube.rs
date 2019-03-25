@@ -1,26 +1,25 @@
 #![allow(unused_imports)]
 #![allow(unused_variables)]
 extern crate bellman;
-extern crate pairing;
 extern crate rand;
 
 // For randomness (during paramgen and proof generation)
 use self::rand::{thread_rng, Rng};
 
 // Bring in some tools for using pairing-friendly curves
-use ff::{
+use bellman::pairing::ff::{
     Field,
     PrimeField,
     PrimeFieldRepr
 };
 
 
-use pairing::{
+use bellman::pairing::{
     Engine
 };
 
 // We're going to use the bn256 pairing-friendly elliptic curve.
-use pairing::bn256::{
+use bellman::pairing::bn256::{
     Bn256,
     Fr
 };
@@ -126,8 +125,8 @@ impl <E: Engine> Circuit<E> for CubeDemo<E> {
     }
 }
 
-#[test]
-fn test_cube_proof(){
+// #[test]
+pub fn test_cube_proof(){
     // This may not be cryptographically safe, use
     // `OsRng` (for example) in production software.
     let rng = &mut thread_rng();
