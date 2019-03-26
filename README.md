@@ -1,7 +1,6 @@
 # Bellman examples 
 
 Here is bellman pedersen hash example, written with ethereum bellman fork, designed by [Matter Labs](https://github.com/matter-labs/).
-
  
  `main.rs` contains a circuit for the statement "I know `x` such that `pedersen(x) == y`"
  
@@ -36,3 +35,5 @@ The function `verify_proof` takes the prepared viewing key `pvk`, the `proof`, a
 `cargo build`
 
 `cargo run` runs the example proof in the main file.
+
+Switching between single threaded and multi threaded tests is done in Cargo.toml

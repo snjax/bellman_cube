@@ -30,8 +30,6 @@ impl <'a, E: JubjubEngine> Circuit<E> for PedersenDemo<'a, E> {
         cs: &mut CS
     ) -> Result<(), SynthesisError>
     {
-
-
         let hash = AllocatedNum::alloc(
             cs.namespace(|| "hash"),
             || {
@@ -49,8 +47,6 @@ impl <'a, E: JubjubEngine> Circuit<E> for PedersenDemo<'a, E> {
                 Ok(*preimage_value.get()?)
             }
         )?;
-        preimage.inputize(cs.namespace(|| "preimage input"))?;
-
 
         let preimage_bits = preimage.into_bits_le(cs.namespace(|| "preimage into bits"))?;
 
@@ -79,9 +75,11 @@ pub fn test_pedersen_proof(){
     let rng = &mut thread_rng();
     let pedersen_params = &AltJubjubBn256::new();
 
-    let preimage = Fr::from_hex("0x0b").unwrap();
+    let preimage = rng.gen();
     let hasher = BabyPedersenHasher::default();
     let hash = hasher.hash(preimage);
+    println!("Preimage: {}", preimage);
+    println!("Hash: {}", hash);
 
     println!("Creating parameters...");
     let params = {
@@ -123,10 +121,7 @@ pub fn test_pedersen_proof(){
     let result = verify_proof(
         &pvk,
         &proof,
-        &[
-            hash,
-            preimage
-        ]
+        &[hash]
     ).unwrap();
     assert!(result, "Proof is correct");
 }
