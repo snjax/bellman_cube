@@ -2,7 +2,15 @@
 
 Here is bellman pedersen hash example, written with ethereum bellman fork, designed by [Matter Labs](https://github.com/matter-labs/).
  
- `main.rs` contains a circuit for the statement "I know `x` such that `pedersen(x) == y`"
+`main.rs` contains a circuit for the statement "I know `x` such that `pedersen(x) == y`"
+
+## Running 
+
+`cargo build --release`
+
+`cargo run --release` runs the example proof in the main file.
+
+`cargo run --release --no-default-features` runs the proof in single threaded mode 
  
 ### Constructing a circuit  
 
@@ -29,11 +37,3 @@ In these examples, the function `create_random_proof` is used to create a random
 To verify a proof, prepare the verifying key by passing in `params.vk` to `prepare_verifying_key`. This gives you the prepared viewing key, `pvk`.
 
 The function `verify_proof` takes the prepared viewing key `pvk`, the `proof`, and the output as an array.
-
-## Running 
-
-`cargo build --release`
-
-`cargo run --release` runs the example proof in the main file.
-
-Switching between single threaded and multi threaded tests is done in Cargo.toml
