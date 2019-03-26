@@ -78,8 +78,8 @@ pub fn test_pedersen_proof(){
     let preimage = rng.gen();
     let hasher = BabyPedersenHasher::default();
     let hash = hasher.hash(preimage);
-    println!("Preimage: {}", preimage);
-    println!("Hash: {}", hash);
+    println!("Preimage: {}", preimage.clone());
+    println!("Hash: {}", hash.clone());
 
     println!("Creating parameters...");
     let params = {
