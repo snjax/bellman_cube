@@ -32,8 +32,8 @@ The function `verify_proof` takes the prepared viewing key `pvk`, the `proof`, a
 
 ## Running 
 
-`cargo build`
+`cargo build --release`
 
-`cargo run` runs the example proof in the main file.
+`cargo run --release` runs the example proof in the main file.
 
 Switching between single threaded and multi threaded tests is done in Cargo.toml
