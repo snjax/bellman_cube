@@ -94,7 +94,7 @@ pub fn test_pedersen_proof(){
     };
 
     // Prepare the verification key (for proof verification)
-    let vk = prepare_verifying_key(&params.vk);
+    let pvk = prepare_verifying_key(&params.vk);
 
     println!("Checking constraints...");
     let c = PedersenDemo::<Bn256> {
@@ -121,7 +121,7 @@ pub fn test_pedersen_proof(){
     println!("Proof time: {}ms", stopwatch.elapsed().as_millis());
 
     let result = verify_proof(
-        &vk,
+        &pvk,
         &proof,
         &[
             hash,

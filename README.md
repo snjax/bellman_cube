@@ -1,10 +1,9 @@
 # Bellman examples 
 
-Here is bellman examples, described by arcalinea [here](https://github.com/arcalinea/bellman-examples), rewritten with ethereum bellman fork, designed by [Matter Labs](https://github.com/matter-labs/).
+Here is bellman pedersen hash example, written with ethereum bellman fork, designed by [Matter Labs](https://github.com/matter-labs/).
 
  
- `cube.rs` contains a circuit for the statement "I know `x` such that `x^3 + x + 5 == 35`"
- - This is the same example used in [Vitalik’s blog post](https://medium.com/@VitalikButerin/quadratic-arithmetic-programs-from-zero-to-hero-f6d558cea649) and [christianlundkvist's libsnark tutorial](https://github.com/christianlundkvist/libsnark-tutorial).
+ `main.rs` contains a circuit for the statement "I know `x` such that `pedersen(x) == y`"
  
 ### Constructing a circuit  
 
@@ -36,6 +35,4 @@ The function `verify_proof` takes the prepared viewing key `pvk`, the `proof`, a
 
 `cargo build`
 
-`cargo test` runs test proofs using both example circuits. Tests are located at the bottom of their source files.
-
-`cargo run` runs the `cube.rs` example proof in the main file.
+`cargo run` runs the example proof in the main file.
