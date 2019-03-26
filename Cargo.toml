@@ -1,8 +1,8 @@
 [package]
-authors = ["Igor Gulamov"]
-description = "cube circuit demo for ethereum friendly curve"
+authors = ["Igor Gulamov", "Roman Semenov"]
+description = "Pedersen hash circuit demo for ethereum friendly curve"
 license = "MIT/Apache-2.0"
-name = "cube"
+name = "pedersen-test"
 version = "0.0.1"
 edition = "2018"
 
