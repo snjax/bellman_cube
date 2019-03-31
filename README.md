@@ -2,7 +2,7 @@
 
 Here is bellman pedersen hash example, written with ethereum bellman fork, designed by [Matter Labs](https://github.com/matter-labs/).
  
-`main.rs` contains a circuit for the statement "I know `x` such that `pedersen(x) == y`"
+`main.rs` contains a circuit for the statement "I know `x` such that `pedersen(pedersen(pedersen(pedersen(pedersen(x))))) == y`"
 
 ## Running 
 
