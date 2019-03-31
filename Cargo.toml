@@ -9,9 +9,9 @@ edition = "2018"
 [dependencies]
 rand = "0.4"
 
-bellman = { git = 'https://github.com/poma/bellman', default-features = false }
-sapling-crypto = { git = 'https://github.com/poma/sapling-crypto', default-features = false }
+bellman_ce = { version = "0.3.0", default-features = false }
+sapling-crypto_ce = { version = "0.0.5", default-features = false }
 
 [features]
 default = ["multicore"]
-multicore = ["bellman/multicore", "sapling-crypto/multicore"]
+multicore = ["bellman_ce/multicore", "sapling-crypto_ce/multicore"]
